@@ -24,7 +24,7 @@
 				</b-form-file>
 
 				<div class="quote-preview" v-if="quote.image">
-					<img :src="quote.image"/>
+					<img :src="image" v-if="image"/>
 				</div><!-- /.quote-preview -->
         	</b-form-group>
 
@@ -79,6 +79,7 @@ export default {
   data () {
     return {
     	updateMessage: null,
+      image: '',
     	quote: {
     		name: '',
     		image: null,
@@ -98,9 +99,19 @@ export default {
   		this.quote.imageFile = this.imageFile;
   		this.$store.dispatch('addQuote', this.quote);
 
-  		this.image = null;
-
   		this.updateMessage = 'Quote Added';
+
+      this.quote = {
+        name: '',
+        image: null,
+        price: '',
+        link: '',
+        instructions: '',
+        imageFile: null
+      };
+
+      this.image = '';
+      this.imageFile = null;
 
   		setTimeout(() => {
   			this.updateMessage = null;
@@ -112,4 +123,5 @@ export default {
 
 <style lang="css" scoped>
 .quote-preview { display: inline-block; height: auto; padding: 10px; border: 1px solid #ccc; margin-top: 20px; }
+.quote-preview img { max-width: 100%; }
 </style>

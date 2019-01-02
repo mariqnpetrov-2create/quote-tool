@@ -64,6 +64,7 @@ export const actions = {
 					const type = 'user';
 
 					api.set_user(uid, {
+						email,
 						uid,
 						type
 					});

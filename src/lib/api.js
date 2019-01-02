@@ -6,7 +6,8 @@ import {
 
 const database_users = 'users';
 const database_quotes = 'quotes';
-const database_comments = 'comments';
+const database_main_comments = 'main-comments';
+const database_sub_comments = 'sub-comments';
 
 class API {
 	constructor(auth, database, storage) {
@@ -38,6 +39,14 @@ class API {
 
 	update_user(user, payload) {
 		user.updateProfile(payload);
+
+		this.database()
+			.then(database => {
+				database()
+					.collection(database_users)
+					.doc(user.uid)
+					.update(payload)
+				});
 	}
 
 	get_user_by_id(uid) {
@@ -135,16 +144,71 @@ class API {
 		});
 	}
 
-	add_comment(id, payload, merge = false) {
+	delete_quote(id, imageURL) {
 		return this.database().then(database => {
-			const timestamp = new Date().getTime();
+			return new Promise((resolve, reject) => {
+				database()
+					.collection(database_quotes)
+					.doc(id)
+					.delete()
+					.then( () => {
+						this.storage().then( storage => {
+							const imageRef = storage().refFromURL(imageURL);
+
+							imageRef.delete();
+
+							resolve();
+						})
+						.catch(err => {
+							reject(err);
+						});
+					});
+			});
+		});
+	}
+
+	add_comment(id, payload) {
+		return this.database().then(database => {
+			const timestamp = database.Timestamp.now().toMillis();
+
+			payload.date = timestamp;
 
 			return database()
-				.collection(database_comments)
+				.collection(database_main_comments)
 				.doc(id)
-				.collection(timestamp.toString())
-				.doc()
-				.set(payload, { merge: merge });
+				.collection('comments')
+				.add(payload);
+		});
+	}
+
+	add_sub_comment(id, payload, commentId) {
+		return this.database().then(database => {
+			const timestamp = database.Timestamp.now().toMillis();
+
+			payload.date = timestamp;
+
+			return database()
+				.collection(database_main_comments)
+				.doc(id)
+				.collection('comments')
+				.doc(commentId)
+				.collection('subcomments')
+				.add(payload);
+		});
+	}
+
+	get_comments(id) {
+		return this.database().then(database => {
+			database()
+				.collection(database_main_comments)
+				.doc(id)
+				.onSnapshot(doc => {
+					if (doc.exists) {
+						resolve(doc.data());
+					} else {
+						reject(null);
+					}
+				});
 		});
 	}
 }

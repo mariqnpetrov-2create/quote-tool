@@ -10,6 +10,7 @@ export const actions = {
 
 		api.get_current_user().then(user => {
 			if ( newUserData.imageFile ) {
+				const timestamp = new Date().getTime();
 				const path = user.uid + '/profilePicture/' + newUserData.imageFile.name;
 
 				api.upload_image(path, newUserData.imageFile).then(url => {

@@ -50,8 +50,6 @@ export default {
   	signUp() {
   		this.$store.dispatch('signup', {email: this.email, password: this.password})
         .then((user) => {
-          this.$store.commit('auth/login', user);
-
           this.$router.push('/');
         })
   	}

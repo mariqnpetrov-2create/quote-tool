@@ -1,45 +1,59 @@
 <template>
 	<div>
 		<div v-for="(comment, index) in comments" :key="index">
-			<div class="comment">
-				<div class="comment-author">
-					<span>{{comment.id}}</span>
+			<div class="comment" v-if="users && user">
+				<div class="comment-author" v-if="userDetails(comment.uid)">
+          <div class="comment-avatar">
+            <img :src="userDetails(comment.uid).photoURL" :alt="userDetails(comment.uid).email">
+          </div><!-- /.comment-avatar -->
+
+          <span v-if="userDetails(comment.uid).displayName">{{userDetails(comment.uid).displayName}}</span>
+					<span v-if="!userDetails(comment.uid).displayName">{{userDetails(comment.uid).email}}</span>
 				</div><!-- /.comment-author -->
 
-				<p>{{comment.entry}}</p>
+				<div class="comment-entry">
+          {{comment.entry}}
+        </div><!-- /.comment-entry -->
+
+        <div class="comment-actions">
+          <b-button @click="showSubComments(comment.id)">Show Comments</b-button>
+        </div><!-- /.comment-actions -->
 
 				<div v-for="(nestedComment, nestedIndex) in comment.children" :key="nestedIndex">
 					<div class="comment">
 						<div class="comment-author">
-							<span>{{nestedComment.id}}</span>
-						</div><!-- /.comment-author -->
+              <div class="comment-avatar">
+                <img :src="userDetails(nestedComment.uid).photoURL" :alt="userDetails(nestedComment.uid).email">
+              </div><!-- /.nestedComment-avatar -->
 
-						<p>{{nestedComment.entry}}</p>
+              <span v-if="userDetails(nestedComment.uid).displayName">{{userDetails(nestedComment.uid).displayName}}</span>
+              <span v-if="!userDetails(nestedComment.uid).displayName">{{userDetails(nestedComment.uid).email}}</span>
+            </div><!-- /.comment-author -->
+
+						<div class="comment-entry">
+              {{nestedComment.entry}}
+            </div><!-- /.comment-entry -->
 					</div><!-- /.comment -->
 				</div>
+
+        <a href="#" @click.prevent="toggleReply(comment)">Reply</a>
+
+        <CommentsForm :postId="postId" :comments="comments" :mainId="comment.id" :user="user" v-if="comment.reply"></CommentsForm>
 			</div><!-- /.comment -->
 		</div>
 
-		<b-form @submit.prevent="addComment" class="form">
-			<h5>Add Comment</h5>
-
-			<b-form-group>
-				<b-form-textarea id="newComment"
-				    type="text"
-				    rows="2"
-					v-model="newComment">
-
-				</b-form-textarea>
-        	</b-form-group>
-
-            <b-form-group>
-                <b-button type="submit">Add</b-button>
-            </b-form-group>
-      </b-form>
+		<CommentsForm :postId="postId" :comments="comments" :user="user" v-if="user"></CommentsForm>
 	</div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
+import CommentsForm from '@/components/CommentsForm.vue';
+
+import {
+  importDatabase,
+} from '@/lib/firebase';
+
 export default {
 
   name: 'Comments',
@@ -47,50 +61,96 @@ export default {
 
   data () {
     return {
-    	comments: [{
-    			id: 123,
-    			entry: 'Test',
-    			children: [{
-    				id: 123,
-    				entry: 'Test 2',
-    			}]
-    		},
-    		{
-    			id: 151,
-    			entry: 'Test 3',
-    			children: [{
-    				id: 123,
-    				entry: 'Test 4'
-    			}]
-    		}
-    	],
-    	newComment: ''
+    	comments: []
     }
   },
-  methods: {
-  	addComment() {
-  		this.$store.dispatch('addComment', {
-  			id: this.postId,
-  			comment: {
-  				uid: this.$store.state.auth.user.uid,
-  				entry: this.newComment
-  			}
-  		});
 
-  		this.comments.push({
-  			id: this.$store.state.auth.user.uid,
-  			entry: this.newComment
-  		});
-
-  		this.newComment = '';
-  	}
+  components: {
+    CommentsForm
   },
-  created() {
 
+  computed: {
+    ...mapGetters(['user', 'users']),
+    userDetails() {
+      if ( !this.users.includes(this.user) ) {
+        this.users.push(this.user)
+      };
+
+      return function(uid) {
+        return this.users.find(user => {
+          return user.uid == uid;
+        });
+      }
+    }
+  },
+
+  methods: {
+    showSubComments(id) {
+      importDatabase().then(database => {
+        database()
+          .collection('main-comments')
+          .doc(this.postId)
+          .collection('comments')
+          .doc(id)
+          .collection('subcomments')
+          .orderBy('date')
+          .onSnapshot(snapshot => {
+            snapshot.docChanges().forEach(change => {
+              if (change.type === 'added') {
+                const data = change.doc.data();
+
+                const currentComment = this.comments.findIndex(comment => comment.id == id);
+
+                this.comments[currentComment].children.push(data);
+
+                this.$store.dispatch('getUsers', data.uid);
+              }
+            });
+          });
+      });
+    },
+
+    toggleReply(comment) {
+      console.log(comment);
+      comment.reply = !comment.reply;
+    }
+  },
+
+  created() {
+    importDatabase().then(database => {
+      database()
+        .collection('main-comments')
+        .doc(this.postId)
+        .collection('comments')
+        .orderBy('date')
+        .onSnapshot(snapshot => {
+          snapshot.docChanges().forEach(change => {
+            if (change.type === 'added') {
+              const data = change.doc.data();
+
+              this.comments.push({
+                ...data,
+                id: change.doc.id,
+                reply: false,
+                children: []
+              });
+
+              this.$store.dispatch('getUsers', data.uid);
+            }
+          });
+        });
+    });
   }
 }
 </script>
 
 <style lang="css" scoped>
 .comment .comment { padding-left: 50px; }
+
+.comment-author { display: flex; align-items: center; }
+
+.comment-avatar { width: 30px; height: 30px; }
+.comment-avatar img { width: 100%; height: 100%; object-position: center center; object-fit: contain; }
+
+.comment-entry { padding-left: 30px; }
 </style>
