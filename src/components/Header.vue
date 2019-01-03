@@ -5,7 +5,7 @@
 				<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
 				<router-link to="/" class="navbar-brand">
-					<img src="https://2create.info/images/logo.png" alt="" width="35" height="35">
+					<img src="@/assets/logo.png" alt="" width="35" height="35">
 				</router-link>
 
 				<b-collapse is-nav id="nav_collapse" class="navigation">
@@ -20,10 +20,6 @@
 					</b-navbar-nav>
 
 					<b-navbar-nav class="ml-auto" v-if="user">
-						<!-- <li class="nav-item" v-if="user.type == 'admin'">
-							<router-link class="nav-link" to="/add-assignment">Add Assignment</router-link>
-						</li> -->
-
 						<li class="nav-item">
 							<router-link class="nav-link" to="/quotes">Quotes</router-link>
 						</li>

@@ -44,8 +44,8 @@ export const actions = {
 	},
 
 	getQuotes( {context} ) {
-		api.get_quotes().then(quotes => {
-			state.quotes = quotes;
+		return api.get_quotes().then(quotes => {
+			return state.quotes = quotes;
 		})
 		.catch(err => {
 			state.quotes = [];

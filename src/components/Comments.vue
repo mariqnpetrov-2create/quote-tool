@@ -12,11 +12,11 @@
 				</div><!-- /.comment-author -->
 
 				<div class="comment-entry">
-          {{comment.entry}}
+                    <!-- <vue-markdown>{{comment.entry}}</vue-markdown> -->
         </div><!-- /.comment-entry -->
 
         <div class="comment-actions">
-          <b-button @click="showSubComments(comment.id)">Show Comments</b-button>
+          <b-button @click="showSubComments(comment.id); comment.subRevealed = true" v-if="!comment.subRevealed && comment.hasSub">Show Comments</b-button>
         </div><!-- /.comment-actions -->
 
 				<div v-for="(nestedComment, nestedIndex) in comment.children" :key="nestedIndex">
@@ -31,12 +31,15 @@
             </div><!-- /.comment-author -->
 
 						<div class="comment-entry">
-              {{nestedComment.entry}}
+                            <!-- <vue-markdown>{{nestedComment.entry}}</vue-markdown> -->
             </div><!-- /.comment-entry -->
 					</div><!-- /.comment -->
 				</div>
 
-        <a href="#" @click.prevent="toggleReply(comment)">Reply</a>
+        <a href="#" @click.prevent="toggleReply(comment)">
+            <span v-if="!comment.reply">Reply</span>
+            <span v-if="comment.reply">Close</span>
+        </a>
 
         <CommentsForm :postId="postId" :comments="comments" :mainId="comment.id" :user="user" v-if="comment.reply"></CommentsForm>
 			</div><!-- /.comment -->
@@ -49,6 +52,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import CommentsForm from '@/components/CommentsForm.vue';
+// import VueMarkdown from 'vue-markdown';
 
 import {
   importDatabase,
@@ -66,7 +70,8 @@ export default {
   },
 
   components: {
-    CommentsForm
+    CommentsForm,
+    // VueMarkdown
   },
 
   computed: {
@@ -111,7 +116,6 @@ export default {
     },
 
     toggleReply(comment) {
-      console.log(comment);
       comment.reply = !comment.reply;
     }
   },
@@ -128,16 +132,27 @@ export default {
             if (change.type === 'added') {
               const data = change.doc.data();
 
-              this.comments.push({
-                ...data,
-                id: change.doc.id,
-                reply: false,
-                children: []
-              });
+              let hasSub = false;
+
+               change.doc.ref.collection('subcomments').get().then(doc => {
+                    hasSub = !doc.empty;
+
+                    this.comments.push({
+                        ...data,
+                        id: change.doc.id,
+                        reply: false,
+                        subRevealed: false,
+                        hasSub,
+                        children: []
+                    });
+               });
+
 
               this.$store.dispatch('getUsers', data.uid);
             }
+
           });
+
         });
     });
   }
