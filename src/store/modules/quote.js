@@ -15,7 +15,6 @@ export const actions = {
 		api.get_current_user().then(user => {
 			if ( data.imageFile ) {
 				const timestamp = new Date().getTime();
-				// const path = user.uid + '/screenshots/' + data.imageFile.name;
 				const path = user.uid + '/screenshots/' + timestamp;
 
 				const {name, price, instructions, link} = data;
@@ -27,7 +26,8 @@ export const actions = {
 						name,
 						price,
 						instructions,
-						link
+						link,
+                        approved: false
 					});
 
 					state.commit('addQuote', {
@@ -36,7 +36,8 @@ export const actions = {
 						name,
 						price,
 						instructions,
-						link
+						link,
+                        approved: false
 					});
 				});
 			}
@@ -59,7 +60,11 @@ export const actions = {
 
 	deleteQuote( {context}, {id, imageURL} ) {
 		return api.delete_quote(id, imageURL);
-	}
+	},
+
+    toggleApprove( {context}, {id, isApproved} ) {
+        return api.toggle_approve_quote(id, isApproved);
+    }
 };
 
 export const mutations = {

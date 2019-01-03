@@ -12,6 +12,16 @@
             </b-form-group>
         </b-form>
 
+        <b-form-group>
+            <b-form-checkbox v-model="byUser" @input="filterQuotes">
+                My Quotes
+            </b-form-checkbox>
+
+            <b-form-checkbox v-model="approved" @input="filterQuotes">
+                Approved Quotes
+            </b-form-checkbox>
+        </b-form-group>
+
         <b-row v-if="quotes">
             <b-col v-for="(quote, index) in filteredQuotes" :key="index" xl="4" md="6">
                 <b-card :title="quote.name"
@@ -53,7 +63,13 @@ export default {
         filters: {
             search: ''
         },
-        filteredQuotes: {}
+        filteredQuotes: {},
+        options: [{
+            text: 'My Quotes Only',
+            value: 'my-quotes'
+        }],
+        byUser: false,
+        approved: false
     }
   },
   computed: {
@@ -81,7 +97,11 @@ export default {
         const searchRegex = new RegExp(this.filters.search)
 
         this.filteredQuotes = this.quotes.filter(quote => {
-            return searchRegex.test(quote.name) || searchRegex.test(quote.instructions);
+            const isMatched = searchRegex.test(quote.name) || searchRegex.test(quote.instructions);
+            const isByUser = this.byUser != true ? true : quote.uid == this.user.uid;
+            const isApproved = this.approved != true ? true : quote.approved;
+
+            return isMatched && isByUser && isApproved;
         });
     }
   }

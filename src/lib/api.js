@@ -167,6 +167,19 @@ class API {
 		});
 	}
 
+    toggle_approve_quote(id, isApproved) {
+        return this.database().then(database => {
+            return new Promise((resolve, reject) => {
+                database()
+                    .collection(database_quotes)
+                    .doc(id)
+                    .update({
+                        approved: isApproved
+                    });
+            });
+        });
+    }
+
 	add_comment(id, payload) {
 		return this.database().then(database => {
 			const timestamp = database.Timestamp.now().toMillis();

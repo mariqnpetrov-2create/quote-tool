@@ -4,7 +4,8 @@
 			<div class="comment" v-if="users && user">
 				<div class="comment-author" v-if="userDetails(comment.uid)">
           <div class="comment-avatar">
-            <img :src="userDetails(comment.uid).photoURL" :alt="userDetails(comment.uid).email">
+            <img v-if="userDetails(comment.uid).photoURL" :src="userDetails(comment.uid).photoURL" :alt="userDetails(comment.uid).email">
+            <img v-else src="@/assets/user-image.png" :alt="userDetails(comment.uid).email">
           </div><!-- /.comment-avatar -->
 
           <span v-if="userDetails(comment.uid).displayName">{{userDetails(comment.uid).displayName}}</span>
@@ -12,7 +13,7 @@
 				</div><!-- /.comment-author -->
 
 				<div class="comment-entry">
-                    <!-- <vue-markdown>{{comment.entry}}</vue-markdown> -->
+                    <vue-markdown>{{comment.entry}}</vue-markdown>
         </div><!-- /.comment-entry -->
 
         <div class="comment-actions">
@@ -31,7 +32,7 @@
             </div><!-- /.comment-author -->
 
 						<div class="comment-entry">
-                            <!-- <vue-markdown>{{nestedComment.entry}}</vue-markdown> -->
+                            <vue-markdown>{{nestedComment.entry}}</vue-markdown>
             </div><!-- /.comment-entry -->
 					</div><!-- /.comment -->
 				</div>
@@ -52,7 +53,7 @@
 <script>
 import { mapGetters } from 'vuex';
 import CommentsForm from '@/components/CommentsForm.vue';
-// import VueMarkdown from 'vue-markdown';
+import VueMarkdown from 'vue-markdown';
 
 import {
   importDatabase,
@@ -71,7 +72,7 @@ export default {
 
   components: {
     CommentsForm,
-    // VueMarkdown
+    VueMarkdown
   },
 
   computed: {
