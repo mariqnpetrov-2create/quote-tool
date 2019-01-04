@@ -30,7 +30,5 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.main { padding: 50px 0; }
 
-.wrapper { position: relative; min-height: 100vh; padding-bottom: 80px; }
 </style>

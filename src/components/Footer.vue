@@ -22,6 +22,6 @@ export default {
 </script>
 
 <style lang="css" scoped>
-	.footer { position: absolute; bottom: 0; left: 0; display: flex; align-items: center; width: 100%; height: 80px; background: #000; color: #fff; text-align: center; }
+	.footer { position: absolute; bottom: 0; left: 0; display: flex; align-items: center; width: 100%; height: 80px; background: #333; color: #fff; text-align: center; }
 	.footer .footer-inner { width: 100%; }
 </style>

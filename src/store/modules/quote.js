@@ -64,6 +64,10 @@ export const actions = {
 
     toggleApprove( {context}, {id, isApproved} ) {
         return api.toggle_approve_quote(id, isApproved);
+    },
+
+    toggleLike( {context}, {id, likedBy} ) {
+    	return api.toggle_like(id,likedBy);
     }
 };
 

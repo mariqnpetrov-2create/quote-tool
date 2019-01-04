@@ -1,6 +1,6 @@
 <template>
 	<header class="header">
-		<b-navbar toggleable="md" type="dark" variant="info">
+		<b-navbar toggleable="md" type="dark">
 			<div class="container">
 				<b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
 
@@ -77,6 +77,9 @@ export default {
 
 	.avatar { width: auto; height: auto; max-width: 36px; max-height: 36px; margin: -8px 0 -8px -8px; }
 
+	.navbar { background: #505050; color: #fff; }
+	.navbar .navigation .navbar-nav .nav-link { color: #fff; }
+
 	.profile-dropdown { margin-left: 20px; background: none; }
 	.profile-dropdown button { border: 0 none; background: none; }
 	.profile-dropdown button:hover,
@@ -86,4 +89,5 @@ export default {
 	.profile-dropdown.show button:active,
 	.profile-dropdown.show button:focus,
 	.profile-dropdown.show button:hover { background: none !important; outline: 0 none; box-shadow: none !important; border: 0 none!important; }
+
 </style>

@@ -9,6 +9,8 @@
   "dependencies": {
     "bootstrap-vue": "^2.0.0-rc.11",
     "firebase": "^5.7.1",
+    "firebase-tools": "^6.2.2",
+    "moment": "^2.23.0",
     "vue": "^2.5.21",
     "vue-markdown": "^2.2.4",
     "vue-router": "^3.0.2",

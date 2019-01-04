@@ -8,18 +8,22 @@
                     v-model="filters.search">
                 </b-form-input>
 
-                <b-button type="submit" class="search-btn">Search</b-button>  
+                <b-button type="submit" class="search-btn">Search</b-button>
             </b-form-group>
         </b-form>
 
         <b-form-group>
-            <b-form-checkbox v-model="byUser" @input="filterQuotes">
-                My Quotes
-            </b-form-checkbox>
+          <b-row align-v="center">
+            <b-col md="3" lg="3">
+              <b-form-select v-model="approved" :options="quoteOptions" class="select" @input="filterQuotes"  />
+            </b-col>
 
-            <b-form-checkbox v-model="approved" @input="filterQuotes">
-                Approved Quotes
-            </b-form-checkbox>
+            <b-col md="3" lg="2">
+              <b-form-checkbox v-model="byUser" @input="filterQuotes">
+                  My Quotes
+              </b-form-checkbox>
+            </b-col>
+          </b-row>
         </b-form-group>
 
         <b-row v-if="quotes">
@@ -64,12 +68,18 @@ export default {
             search: ''
         },
         filteredQuotes: {},
-        options: [{
-            text: 'My Quotes Only',
-            value: 'my-quotes'
+        quoteOptions: [{
+          text: 'Select Approved',
+          value: ''
+        },{
+          text: 'Approved Quotes',
+          value: true
+        },{
+          text: 'Unapproved Quotes',
+          value: false
         }],
         byUser: false,
-        approved: false
+        approved: ''
     }
   },
   computed: {
@@ -99,7 +109,7 @@ export default {
         this.filteredQuotes = this.quotes.filter(quote => {
             const isMatched = searchRegex.test(quote.name) || searchRegex.test(quote.instructions);
             const isByUser = this.byUser != true ? true : quote.uid == this.user.uid;
-            const isApproved = this.approved != true ? true : quote.approved;
+            const isApproved = this.approved != '' ? quote.approved : true;
 
             return isMatched && isByUser && isApproved;
         });
@@ -119,4 +129,6 @@ export default {
 
 .filters { position: relative; }
 .filters .search-btn { position: absolute; top: 0; right: 0; min-width: 100px; }
+
+.select { margin-bottom: 0; }
 </style>

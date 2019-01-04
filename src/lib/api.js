@@ -147,6 +147,8 @@ class API {
 	delete_quote(id, imageURL) {
 		return this.database().then(database => {
 			return new Promise((resolve, reject) => {
+				this.delete_comments(id);
+
 				database()
 					.collection(database_quotes)
 					.doc(id)
@@ -163,6 +165,33 @@ class API {
 							reject(err);
 						});
 					});
+			});
+		});
+	}
+
+	delete_comments(id) {
+		return this.database().then(database => {
+			return new Promise((resolve, reject) => {
+				const query = database()
+					.collection(database_main_comments)
+					.doc(id)
+					.collection('comments')
+					.get();
+
+				const batch = database().batch();
+
+				query.then(snapshot => {
+					snapshot.forEach(doc => {
+						batch.delete(doc.ref);
+					});
+
+					batch.commit()
+				});
+
+				database()
+					.collection(database_main_comments)
+					.doc(id)
+					.delete();
 			});
 		});
 	}
@@ -224,7 +253,19 @@ class API {
 				});
 		});
 	}
+
+	toggle_like(id, likedBy) {
+		return this.database().then(database => {
+			database()
+				.collection(database_quotes)
+				.doc(id)
+				.update({
+					likedBy
+				});
+		});
+	}
 }
+
 
 export default new API(
 	importAuth,

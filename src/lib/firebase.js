@@ -4,7 +4,7 @@
  * @return {Promise}
  */
 export const importAuth = async () => {
-	const { default: firebase} = await import('firebase/app');
+	const { default: firebase } = await import('firebase/app');
 
 	await import('firebase/auth');
 
@@ -28,7 +28,7 @@ export const importDatabase = async () => {
 };
 
 export const importStorage = async () => {
-	const { default: firebase} = await import('firebase/app');
+	const { default: firebase } = await import('firebase/app');
 
 	await import('firebase/storage');
 
