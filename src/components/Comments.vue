@@ -197,7 +197,7 @@ export default {
 .sub-comment { margin-top: 20px; }
 
 .comment .date { display: inline-block; }
-.comment .user-name { margin-right: 10px; }
+.comment .user-name { overflow: hidden; margin-right: 10px; white-space: nowrap; text-overflow: ellipsis; }
 
 .comments-toggle { float: left; }
 
@@ -290,6 +290,8 @@ export default {
   .comment-actions { margin-left: 0; }
 
   .comment .comment { padding-left: 50px; }
+
+  .comment .user-name { display: block; }
 }
 
 </style>

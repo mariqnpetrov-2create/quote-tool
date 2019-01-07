@@ -14,7 +14,7 @@
 
         <b-form-group>
           <b-row align-v="center">
-            <b-col md="3" lg="3">
+            <b-col md="4" lg="3">
               <b-form-select v-model="approved" :options="quoteOptions" class="select" @input="filterQuotes"  />
             </b-col>
 
@@ -128,6 +128,7 @@ export default {
 .card .delete-button { margin-right: 10px; }
 
 .filters { position: relative; }
+.filters .form-control { padding-right: 120px; }
 .filters .search-btn { position: absolute; top: 0; right: 0; min-width: 100px; }
 
 .select { margin-bottom: 0; }

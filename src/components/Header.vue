@@ -90,4 +90,9 @@ export default {
 	.profile-dropdown.show button:focus,
 	.profile-dropdown.show button:hover { background: none !important; outline: 0 none; box-shadow: none !important; border: 0 none!important; }
 
+	@media ( max-width: 767px ) {
+		.profile-dropdown.profile-dropdown { display: block;	margin-left: 0; }
+		.profile-dropdown .btn { font-size: 13px; }
+		.profile-dropdown .dropdown-item { font-size: 13px; }
+	}
 </style>

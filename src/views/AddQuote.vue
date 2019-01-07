@@ -26,6 +26,8 @@
 				<div class="quote-preview" v-if="quote.image">
 					<img :src="image" v-if="image"/>
 				</div><!-- /.quote-preview -->
+
+        <span class="form-note">Maximum 1 MB.</span>
         	</b-form-group>
 
         	<b-form-group
@@ -124,4 +126,6 @@ export default {
 <style lang="css" scoped>
 .quote-preview { display: inline-block; height: auto; padding: 10px; border: 1px solid #ccc; margin-top: 20px; }
 .quote-preview img { max-width: 100%; }
+
+.form-note { font-size: 13px; }
 </style>

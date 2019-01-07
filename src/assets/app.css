@@ -34,4 +34,11 @@ blockquote:last-child { margin-bottom: 0; }
 
 .date { font-size: 13px; }
 
+.form-control::placeholder { color: #ccc; }
+
 textarea.form-control { padding: 16px; }
+
+@media ( max-width: 767px ) {
+	html { font-size: 10px; }
+	body { font-size: 13px; }
+}
